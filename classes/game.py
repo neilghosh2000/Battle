@@ -2,18 +2,23 @@ import random
 
 
 class BColors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
+    END = '\033[0m'
+
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    CYAN = '\033[96m'
+    WHITE = '\033[97m'
+
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    BLINK = '\033[5m'
 
 
 class Person:
-    def __init__(self, hp, mp, atk, dfn, magic):
+    def __init__(self, hp, mp, atk, dfn, magic, items):
         self.maxhp = hp
         self.hp = hp
         self.maxmp = mp
@@ -22,7 +27,8 @@ class Person:
         self.atkh = atk + 10
         self.dfn = dfn
         self.magic = magic
-        self.actions = ["Attack", "Magic"]
+        self.items = items
+        self.actions = ["Attack", "Magic", "Items"]
 
     def get_damage(self):
         return random.randrange(self.atkl, self.atkh)
@@ -40,20 +46,27 @@ class Person:
         return self.maxmp
 
     def reduce_mp(self, i):
-        self.mp -= self.magic[i]["Cost"]
+        self.mp -= self.magic[i].cost
 
     def choose_action(self):
-        print("Choose Action:")
+        print(BColors.BOLD + BColors.CYAN + "Choose Action:" + BColors.END)
         i = 1
         for item in self.actions:
-            print(str(i), ":", item)
+            print("     " + str(i), ":", item)
             i += 1
 
     def choose_magic_spell(self):
-        print("Choose Magic Spell:")
+        print(BColors.BOLD + BColors.CYAN + "Choose Magic Spell:" + BColors.END)
         i = 1
         for spell in self.magic:
-            print(str(i) + " : " + spell.name + " (Cost : " + str(spell.cost) + ")")
+            print("     " + str(i) + " : " + spell.name + " (Cost : " + str(spell.cost) + ")")
+            i += 1
+
+    def choose_item(self):
+        print(BColors.BOLD + BColors.CYAN + "Choose Item:" + BColors.END)
+        i = 1
+        for item in self.items:
+            print("     " + str(i) + " : " + item.name + " - " + item.description)
             i += 1
 
 
