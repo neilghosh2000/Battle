@@ -17,93 +17,136 @@ cura = Spell("Cura", 110, 135, "White")
 # Defining Items
 small_potion = Items("Small Potion", "Heal", "Heals for 75 HP", 75)
 large_potion = Items("Large Potion", "Heal", "Heals for 150 HP", 150)
-elixir = Items("Elixir", "Heal", "Regenerates full HP", 10000)
+elixir = Items("Elixir", "Heal", "Regenerates full HP and MP", 10000)
 grenade = Items("Grenade", "Damage", "Deals 150 damage", 150)
 trap = Items("Trap", "Damage", "Deals 90 damage", 90)
 
 magic = [fire, thunder, blizzard, meteor, earthquake, cure, cura]
-items = [small_potion, large_potion, elixir, grenade, trap]
+items = [{"name": small_potion, "quantity": 3}, {"name": large_potion, "quantity": 2}, {"name": elixir, "quantity": 1}
+         , {"name": grenade, "quantity": 2}, {"name": trap, "quantity": 1}]
 
 # Defining Player and Enemy
-player = Person(1000, 450, 80, 60, magic, items)
-enemy = Person(800, 500, 90, 70, [], [])
+player1= Person("Player 1", 1000, 450, 80, 60, magic, items)
+player2= Person("Player 2", 1000, 450, 80, 60, magic, items)
+player3= Person("Player 3", 1000, 450, 80, 60, magic, items)
+enemy = Person("Enemy   ", 800, 500, 90, 70, [], [])
 
+players = [player1, player2, player3]
 running = True
 
 print(BColors.BOLD + BColors.RED + "Battle Begins!" + BColors.END)
 while running:
-    print("==============================================")
-    player.choose_action()
-    choice = int(input("Please enter your choice:" + "\n"))
+    print("------------------------------------------------------------------------------------------------------------"
+          "----------" + "\n")
 
-    if choice == 1:
-        player_damage = player.get_damage()
-        enemy.hp -= player_damage
-        print("\n" + BColors.GREEN + "You attacked the enemy for", player_damage, "points." + BColors.END)
+    print("  " + BColors.BOLD + BColors.UNDERLINE + "Name" + BColors.END + "                                            "
+             "    " + BColors.BOLD + BColors.UNDERLINE + "Health Points" + BColors.END + "                              "
+             "      " + BColors.BOLD + BColors.UNDERLINE + "Magic Points" + BColors.END)
 
-    elif choice == 2:
-        player.choose_magic_spell()
-        magic_choice = int(input("Please enter your choice:" + "\n")) - 1
-        magic_cost = magic[magic_choice].cost
-        magic_damage = magic[magic_choice].damage
+    for player in players:
+        player.show_stats()
 
-        if player.get_mp() >= magic_cost:
-            if magic[magic_choice].category == "White":
-                player.hp += magic_damage
-                player.reduce_mp(magic_choice)
+    for player in players:
+        player.choose_action()
+        choice = int(input("Please enter your choice:" + "\n"))
 
-                if player.get_hp() >= player.get_max_hp():
-                    magic_damage -= (player.get_hp() - player.get_max_hp())
-                    player.hp = player.get_max_hp()
-                print("\n" + BColors.GREEN + "You healed yourself using " + magic[magic_choice].name + ", using " +
-                      str(magic_cost) + " magic points for " + str(magic_damage) +
-                      " health." + BColors.END)
+        # If player chooses Attack
+        if choice == 1:
+            player_damage = player.get_damage()
+            enemy.hp -= player_damage
+            print("\n" + BColors.GREEN + player.name + "attacked the enemy for", player_damage, "points." + BColors.END)
 
-            elif magic[magic_choice].category == "Black":
-                player.reduce_mp(magic_choice)
-                enemy.hp -= magic_damage
-                print("\n" + BColors.BLUE + "You attacked the enemy using " + magic[magic_choice].name + ", using "
-                      + str(magic_cost) + " magic points and dealing " + str(magic_damage) + " damage." + BColors.END)
+        # If the player chooses Magic
+        elif choice == 2:
+            player.choose_magic_spell()
+            magic_choice = int(input("Please enter your choice:" + "\n")) - 1
 
-        elif player.get_mp() < magic_cost:
-            print("\n" + BColors.RED + "You do not have enough magic points to perform this spell!" + BColors.END + "\n")
+            if magic_choice == -1:
+                continue
+
+            magic_cost = magic[magic_choice].cost
+            magic_damage = magic[magic_choice].damage
+
+            if player.get_mp() >= magic_cost:
+                if magic[magic_choice].category == "White":
+                    player.hp += magic_damage
+                    player.reduce_mp(magic_choice)
+
+                    if player.get_hp() >= player.get_max_hp():
+                        magic_damage -= (player.get_hp() - player.get_max_hp())
+                        player.hp = player.get_max_hp()
+                    print("\n" + BColors.GREEN + player.name + " healed yourself using " + magic[magic_choice].name + ", using " +
+                          str(magic_cost) + " magic points for " + str(magic_damage) +
+                          " health." + BColors.END)
+
+                elif magic[magic_choice].category == "Black":
+                    player.reduce_mp(magic_choice)
+                    enemy.hp -= magic_damage
+                    print("\n" + BColors.BLUE + player.name + " attacked the enemy using " + magic[magic_choice].name +
+                          ", using " + str(magic_cost) + " magic points and dealing " + str(magic_damage) + " damage."
+                          + BColors.END)
+
+            elif player.get_mp() < magic_cost:
+                print("\n" + BColors.RED + player.name + "does not have enough magic points to perform this spell!" +
+                      BColors.END + "\n")
+                continue
+
+        # If the player choose Items
+        elif choice == 3:
+            player.choose_item()
+            item_choice = int(input("Please enter your choice:" + "\n")) - 1
+            item_value = player.items[item_choice]["name"].value
+
+            if item_choice == -1:
+                continue
+
+            if player.items[item_choice]["quantity"] > 0:
+                player.items[item_choice]["quantity"] -= 1
+
+                if player.items[item_choice]["name"].category == "Heal":
+                    player.hp += item_value
+                    if player.items[item_choice]["name"].name == "Elixir":
+                        mp_value = player.get_max_mp() - player.get_mp()
+                        player.mp = player.get_max_mp()
+
+                    if player.get_hp() >= player.get_max_hp():
+                        item_value -= (player.get_hp() - player.get_max_hp())
+                        player.hp = player.get_max_hp()
+
+                    if player.items[item_choice]["name"].name == "Elixir":
+                        print("\n" + BColors.YELLOW + player.name + " healed yourself using " + items[item_choice][
+                            "name"].name + " for " + str(item_value) + " HP and " + str(mp_value) + " MP." +
+                              BColors.END)
+                    else:
+                        print("\n" + BColors.YELLOW + player.name + " healed yourself using " +
+                              items[item_choice]["name"].name + " for " + str(item_value) + " HP." + BColors.END)
+
+                elif items[item_choice]["name"].category == "Damage":
+                    enemy.hp -= item_value
+                    print(BColors.YELLOW + player.name + " attacked the enemy using " + items[item_choice]["name"].name
+                          + " for " + str(item_value) + " HP." + BColors.END)
+            else:
+                print(BColors.RED + "Selected Item not available!" + BColors.END)
+                continue
+        else:
             continue
 
-    elif choice == 3:
-        player.choose_item()
-        item_choice = int(input("Please enter your choice:" + "\n")) - 1
-        item_value = items[item_choice].value
+        enemy_damage = enemy.get_damage()
+        player.hp -= enemy_damage
+        print(BColors.RED + "The enemy attacked " + player.name + " for " + str(enemy_damage) + " points." + BColors.END
+              + "\n")
 
-        if items[item_choice].category == "Heal":
-            player.hp += item_value
-            if player.get_hp() >= player.get_max_hp():
-                item_value -= (player.get_hp() - player.get_max_hp())
-                player.hp = player.get_max_hp()
-            print("\n" + BColors.YELLOW + "You healed yourself using " + items[item_choice].name + " for " +
-                  str(item_value) + " HP." + BColors.END)
+        if player.get_hp() <= 0:
+            player.hp = 0
+            running = False
+        elif enemy.get_hp() <= 0:
+            enemy.hp = 0
+            running = False
 
-        elif items[item_choice].category == "Damage":
-            enemy.hp -= item_value
-            print(BColors.YELLOW + "You attacked the enemy using " + items[item_choice].name + " for " +
-                  str(item_value) + " HP." + BColors.END)
+        print(BColors.RED + "Enemy's HP : " + str(enemy.get_hp()) + "/" + str(enemy.get_max_hp()) + BColors.END)
 
-    enemy_damage = enemy.get_damage()
-    player.hp -= enemy_damage
-    print(BColors.RED + "The enemy attacked you for " + str(enemy_damage) + " points." + BColors.END + "\n")
-
-    if player.get_hp() <= 0:
-        player.hp = 0
-        running = False
-    elif enemy.get_hp() <= 0:
-        enemy.hp = 0
-        running = False
-
-    print(BColors.RED + "Your Enemy's HP : " + str(enemy.get_hp()) + "/" + str(enemy.get_max_hp()) + BColors.END)
-    print(BColors.GREEN + "Your HP : " + str(player.get_hp()) + "/" + str(player.get_max_hp()) + BColors.END)
-    print(BColors.BLUE + "Your MP : " + str(player.get_mp()) + "/" + str(player.get_max_mp()) + BColors.END + "\n")
-
-    if player.get_hp() == 0:
-        print(BColors.RED + "Your Enemy has defeated you!" + BColors.END)
-    elif enemy.get_hp() == 0:
-        print(BColors.GREEN + "You have defeated your enemy!" + BColors.END)
+        if player.get_hp() == 0:
+            print(BColors.RED + "The Enemy has won!" + BColors.END)
+        elif enemy.get_hp() == 0:
+            print(BColors.GREEN + "The Enemy has been defeated!" + BColors.END)
 

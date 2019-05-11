@@ -18,7 +18,7 @@ class BColors:
 
 
 class Person:
-    def __init__(self, hp, mp, atk, dfn, magic, items):
+    def __init__(self, name, hp, mp, atk, dfn, magic, items):
         self.maxhp = hp
         self.hp = hp
         self.maxmp = mp
@@ -29,6 +29,7 @@ class Person:
         self.magic = magic
         self.items = items
         self.actions = ["Attack", "Magic", "Items"]
+        self.name = name
 
     def get_damage(self):
         return random.randrange(self.atkl, self.atkh)
@@ -49,6 +50,7 @@ class Person:
         self.mp -= self.magic[i].cost
 
     def choose_action(self):
+        print("\n" + BColors.BOLD + BColors.MAGENTA + self.name + ":" + BColors.END)
         print(BColors.BOLD + BColors.CYAN + "Choose Action:" + BColors.END)
         i = 1
         for item in self.actions:
@@ -66,8 +68,15 @@ class Person:
         print(BColors.BOLD + BColors.CYAN + "Choose Item:" + BColors.END)
         i = 1
         for item in self.items:
-            print("     " + str(i) + " : " + item.name + " - " + item.description)
+            print("     " + str(i) + " : " + item["name"].name + " - " + item["name"].description + " (x" +
+                  str(item["quantity"]) + ")")
             i += 1
+
+    def show_stats(self):
+        print(BColors.BOLD + self.name + ":" + "                     " + str(self.get_hp()) + "/" + str(self.get_max_hp()) +
+              " |" + BColors.END + BColors.GREEN + "█████████████████████████" + BColors.END + BColors.BOLD +
+              "|            " + str(self.get_mp()) + "/" + str(self.get_max_mp()) + "|" + BColors.END +
+              BColors.BLUE + "██████████" + BColors.END + "|")
 
 
 
