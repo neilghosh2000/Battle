@@ -27,10 +27,6 @@ class Person:
     def get_damage(self):
         return random.randrange(self.atkl, self.atkh)
 
-    def get_magic_damage(self, i):
-        mg = self.magic[i]["Damage"]
-        return random.randrange(mg - 5, mg + 5)
-
     def get_hp(self):
         return self.hp
 
@@ -46,12 +42,6 @@ class Person:
     def reduce_mp(self, i):
         self.mp -= self.magic[i]["Cost"]
 
-    def get_spell_cost(self, i):
-        return self.magic[i]["Cost"]
-
-    def get_spell_name(self, i):
-        return self.magic[i]["Spell"]
-
     def choose_action(self):
         print("Choose Action:")
         i = 1
@@ -63,7 +53,7 @@ class Person:
         print("Choose Magic Spell:")
         i = 1
         for spell in self.magic:
-            print(str(i) + " : " + spell["Spell"] + " (Cost : " + str(spell["Cost"]) + ")")
+            print(str(i) + " : " + spell.name + " (Cost : " + str(spell.cost) + ")")
             i += 1
 
 

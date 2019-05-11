@@ -1,11 +1,22 @@
 from classes.game import Person, BColors
+from classes.magic import Spell
 
-magic = [{"Spell": "Fire", "Cost": 100, "Damage": 120},
-         {"Spell": "Thunder", "Cost": 90, "Damage": 100},
-         {"Spell": "Blizzard", "Cost": 120, "Damage": 125}]
 
+# Defining White Magic Spells
+fire = Spell("Fire", 100, 120, "Black")
+thunder = Spell("Thunder", 90, 100, "Black")
+blizzard = Spell("Blizzard", 120, 125, "Black")
+meteor = Spell("Meteor", 105, 110, "Black")
+earthquake = Spell("Earthquake", 135, 150, "Black")
+
+# Defining Black Magic Spells
+cure = Spell("Cure", 80, 100, "White")
+cura = Spell("Cura", 110, 135, "White")
+
+magic = [fire, thunder, blizzard, meteor, earthquake, cure, cura]
+# Defining Player and Enemy
 player = Person(1000, 450, 80, 60, magic)
-enemy = Person(800, 500, 90, 70, magic)
+enemy = Person(800, 500, 90, 70, [])
 
 running = True
 
@@ -22,14 +33,24 @@ while running:
     elif choice == 2:
         player.choose_magic_spell()
         magic_choice = int(input("Please enter your choice:" + "\n")) - 1
-        magic_cost = player.get_spell_cost(magic_choice)
+        magic_cost = magic[magic_choice].cost
+        magic_damage = magic[magic_choice].damage
 
         if player.get_mp() >= magic_cost:
-            magic_damage = player.get_magic_damage(magic_choice)
-            player.mp -= magic_cost
-            enemy.hp -= magic_damage
-            print(BColors.OKBLUE + "You attacked the enemy using " + player.get_spell_name(magic_choice) + ", using "
-                  + str(magic_cost) + " magic points and dealing " + str(magic_damage) + " damage." + BColors.ENDC)
+            if magic[magic_choice].category == "White":
+                player.hp += magic_damage
+                player.mp -= magic_cost
+                if player.get_hp() >= player.get_max_hp():
+                    magic_damage -= (player.get_hp() - player.get_max_hp())
+                    player.hp = player.get_max_hp()
+                print(BColors.OKGREEN + "You healed yourself using " + magic[magic_choice].name + ", using " +
+                      str(magic_cost) + " magic points for " + str(magic_damage) +
+                      " health." + BColors.ENDC)
+            elif magic[magic_choice].category == "Black":
+                player.mp -= magic_cost
+                enemy.hp -= magic_damage
+                print(BColors.OKBLUE + "You attacked the enemy using " + magic[magic_choice].name + ", using "
+                      + str(magic_cost) + " magic points and dealing " + str(magic_damage) + " damage." + BColors.ENDC)
         elif player.get_mp() < magic_cost:
             print(BColors.FAIL + "You do not have enough magic points to perform this spell!" + BColors.ENDC + "\n")
             continue
