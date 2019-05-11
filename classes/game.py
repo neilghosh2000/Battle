@@ -50,7 +50,7 @@ class Person:
         return self.magic[i]["Cost"]
 
     def get_spell_name(self, i):
-        return self.magic[i]["Name"]
+        return self.magic[i]["Spell"]
 
     def choose_action(self):
         print("Choose Action:")
@@ -63,7 +63,7 @@ class Person:
         print("Choose Magic Spell:")
         i = 1
         for spell in self.magic:
-            print(str(i), ":", spell["Name"], "Cost :", spell["Cost"])
+            print(str(i) + " : " + spell["Spell"] + " (Cost : " + str(spell["Cost"]) + ")")
             i += 1
 
 
