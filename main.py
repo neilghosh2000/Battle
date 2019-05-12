@@ -26,9 +26,9 @@ items = [{"name": small_potion, "quantity": 3}, {"name": large_potion, "quantity
          , {"name": grenade, "quantity": 2}, {"name": trap, "quantity": 1}]
 
 # Defining Player and Enemy
-player1= Person("Player 1", 1000, 450, 80, 60, magic, items)
-player2= Person("Player 2", 1000, 450, 80, 60, magic, items)
-player3= Person("Player 3", 1000, 450, 80, 60, magic, items)
+player1 = Person("Player 1", 1000, 450, 10, 60, magic, items)
+player2 = Person("Player 2", 1000, 450, 10, 60, magic, items)
+player3 = Person("Player 3", 1000, 450, 10, 60, magic, items)
 enemy = Person("Enemy   ", 800, 500, 90, 70, [], [])
 
 players = [player1, player2, player3]
@@ -46,7 +46,9 @@ while running:
     for player in players:
         player.show_stats()
 
-    for player in players:
+    i = 0
+    while i < len(players):
+        player = players[i]
         player.choose_action()
         choice = int(input("Please enter your choice:" + "\n"))
 
@@ -54,7 +56,7 @@ while running:
         if choice == 1:
             player_damage = player.get_damage()
             enemy.hp -= player_damage
-            print("\n" + BColors.GREEN + player.name + "attacked the enemy for", player_damage, "points." + BColors.END)
+            print("\n" + BColors.GREEN + player.name + " attacked the enemy for", player_damage, "points." + BColors.END)
 
         # If the player chooses Magic
         elif choice == 2:
@@ -144,6 +146,8 @@ while running:
             running = False
 
         print(BColors.RED + "Enemy's HP : " + str(enemy.get_hp()) + "/" + str(enemy.get_max_hp()) + BColors.END)
+
+        i += 1
 
         if player.get_hp() == 0:
             print(BColors.RED + "The Enemy has won!" + BColors.END)

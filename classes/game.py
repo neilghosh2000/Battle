@@ -4,6 +4,7 @@ import random
 class BColors:
     END = '\033[0m'
 
+    BLACK = '\033[30m'
     RED = '\033[91m'
     GREEN = '\033[92m'
     YELLOW = '\033[93m'
@@ -73,10 +74,38 @@ class Person:
             i += 1
 
     def show_stats(self):
-        print(BColors.BOLD + self.name + ":" + "                     " + str(self.get_hp()) + "/" + str(self.get_max_hp()) +
-              " |" + BColors.END + BColors.GREEN + "█████████████████████████" + BColors.END + BColors.BOLD +
-              "|            " + str(self.get_mp()) + "/" + str(self.get_max_mp()) + "|" + BColors.END +
-              BColors.BLUE + "██████████" + BColors.END + "|")
+        hp_bar = ""
+        hp_bar_invisible = ""
+        hp_bar_length = round((self.get_hp() / self.get_max_hp()) * 25)
+        while len(hp_bar) < hp_bar_length:
+            hp_bar += "█"
+        while len(hp_bar_invisible) < 25 - hp_bar_length:
+            hp_bar_invisible += "█"
+
+        mp_bar = ""
+        mp_bar_invisible = ""
+        mp_bar_length = round((self.get_mp() / self.get_max_mp()) * 10)
+        while len(mp_bar) < mp_bar_length:
+            mp_bar += "█"
+        while len(mp_bar_invisible) < 10 - mp_bar_length:
+            mp_bar_invisible += "█"
+
+        hp_blank = ""
+        mp_blank = ""
+        hp_blank_length = len(str(self.get_hp()))
+        mp_blank_length = len(str(self.get_mp()))
+        while hp_blank_length < len(str(self.get_max_hp())):
+            hp_blank += " "
+            hp_blank_length += 1
+        while mp_blank_length < len(str(self.get_max_mp())):
+            mp_blank += " "
+            mp_blank_length += 1
+
+        print(BColors.BOLD + self.name + ":" + "                     " + hp_blank + str(self.get_hp()) + "/" +
+              str(self.get_max_hp()) + " |" + BColors.END + BColors.GREEN + hp_bar + BColors.END + BColors.RED +
+              hp_bar_invisible + BColors.END + BColors.BLACK + BColors.BOLD + "|            " + mp_blank +
+              str(self.get_mp()) + "/" + str(self.get_max_mp()) + "|" + BColors.END + BColors.BLUE + mp_bar +
+              BColors.END + BColors.RED + mp_bar_invisible + BColors.END + BColors.BLACK + "|" + BColors.END)
 
 
 
