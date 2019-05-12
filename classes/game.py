@@ -73,6 +73,34 @@ class Person:
                   str(item["quantity"]) + ")")
             i += 1
 
+    @staticmethod
+    def choose_target(enemies):
+        print(BColors.BOLD + BColors.RED + "Choose Target:" + BColors.END)
+        i = 1
+        for enemy in enemies:
+            print("     " + str(i) + " : " + enemy.name)
+            i += 1
+        return int(input("Please choose your target:")) - 1
+
+    def show_enemy_stats(self):
+        hp_bar = ""
+        hp_bar_invisible = ""
+        hp_bar_length = round((self.get_hp() / self.get_max_hp()) * 50)
+        while len(hp_bar) < hp_bar_length:
+            hp_bar += "█"
+        while len(hp_bar_invisible) < 50 - hp_bar_length:
+            hp_bar_invisible += "█"
+
+        hp_blank = ""
+        hp_blank_length = len(str(self.get_hp()))
+        while hp_blank_length < len(str(self.get_max_hp())):
+            hp_blank += " "
+            hp_blank_length += 1
+
+        print(BColors.BOLD + self.name + ":" + "                       " + hp_blank + str(self.get_hp()) + "/" +
+              str(self.get_max_hp()) + " |" + BColors.END + BColors.RED + hp_bar + BColors.END + BColors.BLACK +
+              hp_bar_invisible + BColors.END + BColors.BLACK + BColors.BOLD + "|" + BColors.END)
+
     def show_stats(self):
         hp_bar = ""
         hp_bar_invisible = ""
@@ -102,10 +130,10 @@ class Person:
             mp_blank_length += 1
 
         print(BColors.BOLD + self.name + ":" + "                     " + hp_blank + str(self.get_hp()) + "/" +
-              str(self.get_max_hp()) + " |" + BColors.END + BColors.GREEN + hp_bar + BColors.END + BColors.RED +
+              str(self.get_max_hp()) + " |" + BColors.END + BColors.GREEN + hp_bar + BColors.END + BColors.BLACK +
               hp_bar_invisible + BColors.END + BColors.BLACK + BColors.BOLD + "|            " + mp_blank +
               str(self.get_mp()) + "/" + str(self.get_max_mp()) + "|" + BColors.END + BColors.BLUE + mp_bar +
-              BColors.END + BColors.RED + mp_bar_invisible + BColors.END + BColors.BLACK + "|" + BColors.END)
+              BColors.END + BColors.BLACK + mp_bar_invisible + BColors.END + BColors.BLACK + "|" + BColors.END)
 
 
 
